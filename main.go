@@ -33,6 +33,23 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	// シート情報を取得し、実行月のシートが無い場合は新規作成をする
+	if sheet := f.GetSheetIndex(ms); sheet == -1 {
+		fmt.Println("今月のシートが作成されていないため、新規にシートを作成します。")
+		_ = f.NewSheet(ms)
+		if err := f.SetColWidth(ms, "A", "A", 20); err != nil {
+			fmt.Println(err)
+			return
+		}
+		// 日付の欄を作成する
+		for i := 1; i <= 31; i++ {
+			is := strconv.Itoa(i)
+			f.SetCellValue(ms, "A"+is, ms+" "+is)
+		}
+		// 合計値計算セルの作成
+		f.SetCellValue(ms, "A32", "合計稼働時間")
+		f.SetCellFormula(ms, "B32", "SUM(B1:B31)")
+	}
 	// シートのindex番号を取得
 	index := f.GetSheetIndex(ms)
 	// 値をSet
@@ -43,12 +60,6 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	// 合計稼働時間の取得
-	th, err := f.GetCellValue(ms, "B32")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 
-	fmt.Println("勤怠を記録しました。\n今月の合計稼働時間は、現在 " + th + " 時間です。\n本日もお疲れ様でした。")
+	fmt.Println("勤怠を記録しました。\n本日もお疲れ様でした。")
 }
