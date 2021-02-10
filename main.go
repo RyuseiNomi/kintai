@@ -19,7 +19,7 @@ func main() {
 		fmt.Println("稼働時間を入力してください。")
 		return
 	}
-	hour, _ := strconv.Atoi(sh)
+	hour, _ := strconv.ParseFloat(sh, 64)
 	// 実行時の月を取得
 	t := time.Now()
 	m := t.Month()
